@@ -155,12 +155,76 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 <main><section class="pg"><div class="wrap" style="max-width:780px">
 <span class="eyebrow">Careers</span>
 <h1 style="font-size:clamp(2rem,5vw,3rem);margin-top:14px">Work with Baigamats</h1>
-<p class="sub">We are a small team in Uganda building business software for every kind of business. There are no open roles at the moment, but we are always glad to hear from people who care about making everyday business simpler.</p>
-<div class="post"><h3>Want to be considered for future roles?</h3>
-<p>Email a short note about the work you would like to do and attach your CV. Use the subject "Careers".</p>
-<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px"><a class="btn primary" style="color:#13213C" target="_blank" rel="noopener" href="https://mail.google.com/mail/?view=cm&fs=1&to=baigamatsinquiries@gmail.com&su=Careers&body=Hello%2C%0A%0AI%20would%20like%20to%20be%20considered%20for%20future%20roles%20at%20Baigamats.%0A%0AName%3A%0ARole%20I%20am%20interested%20in%3A%0A">Send us your CV</a></div>
-<p style="font-size:.9rem">Or write to baigamatsinquiries@gmail.com. We will keep your details only to consider you for roles.</p></div>
+<p class="sub">We are a small team in Uganda building business software for every kind of business. There are no open roles at the moment, but we are always glad to hear from people who care about making everyday business simpler. Tell us about yourself and we will keep your application for future openings.</p>
+
+<form id="apply" class="post form" novalidate>
+  <h3>Apply</h3>
+  <div class="row">
+    <label>Full name *<input id="full_name" name="full_name" type="text" autocomplete="name" maxlength="120" required></label>
+    <label>Email *<input id="email" name="email" type="email" autocomplete="email" maxlength="160" required></label>
+  </div>
+  <div class="row">
+    <label>Phone or WhatsApp<input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
+    <label>Position or area you are interested in *<input id="role_interest" name="role_interest" type="text" maxlength="160" required></label>
+  </div>
+  <div class="row">
+    <label>Country you live in *<input id="country_of_residence" name="country_of_residence" type="text" autocomplete="country-name" maxlength="80" required></label>
+    <label>Nationality *<input id="nationality" name="nationality" type="text" maxlength="80" required></label>
+  </div>
+  <label>Do you have the right to work in Uganda? *
+    <select id="work_authorisation" name="work_authorisation" required>
+      <option value="">Choose one</option>
+      <option value="citizen">Yes, I am a Ugandan citizen</option>
+      <option value="work_permit">Yes, I hold a valid work permit</option>
+      <option value="need_permit">No, I would need a work permit</option>
+    </select>
+  </label>
+  <label>LinkedIn or portfolio link (optional)<input id="link" name="link" type="url" placeholder="https://" maxlength="300"></label>
+  <label>A few words about you (optional)<textarea id="note" name="note" rows="4" maxlength="2000"></textarea></label>
+  <label>Your CV or resume * <span class="hint">PDF or Word, up to 4 MB</span>
+    <input id="cv" name="cv" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+  </label>
+  <div class="hp" aria-hidden="true"><label>Leave this empty<input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+  <label class="check"><input id="consent" name="consent" type="checkbox" value="yes" required> <span>I agree that Baigamats may store my details and CV to consider me for roles. I can ask for them to be deleted at any time. *</span></label>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button class="btn primary" style="color:#13213C;cursor:pointer" id="send" type="submit">Submit application</button><span id="msg" role="status" aria-live="polite"></span></div>
+</form>
 </div></section></main>
+<style>
+.form{display:grid;gap:16px}.form h3{margin-bottom:2px}
+.form .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form label{display:grid;gap:6px;font-weight:600;font-size:.92rem;min-width:0}
+.form .hint{font-weight:400;color:var(--muted);font-size:.84rem}
+.form input[type=text],.form input[type=email],.form input[type=tel],.form input[type=url],.form select,.form textarea,.form input[type=file]{font:400 1rem var(--body);color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;width:100%;min-width:0}
+.form input:focus-visible,.form select:focus-visible,.form textarea:focus-visible{outline:3px solid var(--brand);outline-offset:1px}
+.form .check{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:.9rem;color:var(--muted)}.form .check input{margin-top:4px;flex:none}
+.form .hp{position:absolute;left:-9999px;height:0;overflow:hidden}
+#msg{font-size:.95rem}#msg.ok{color:var(--good)}#msg.err{color:#C75B3F}
+@media(max-width:620px){.form .row{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){
+var f=document.getElementById("apply"),m=document.getElementById("msg"),b=document.getElementById("send");
+function say(t,c){m.textContent=t;m.className=c||""}
+f.addEventListener("submit",function(e){e.preventDefault();
+  var cv=document.getElementById("cv").files[0];
+  var need=["full_name","email","role_interest","country_of_residence","nationality","work_authorisation"];
+  for(var i=0;i<need.length;i++){if(!f.elements[need[i]].value.trim()){say("Please fill in all fields marked with *.","err");f.elements[need[i]].focus();return}}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.elements.email.value.trim())){say("Please enter a valid email address.","err");return}
+  if(!cv){say("Please attach your CV.","err");return}
+  if(cv.size>4*1024*1024){say("Your CV is larger than 4 MB. Please attach a smaller file.","err");return}
+  if(!f.elements.consent.checked){say("Please tick the box to let us keep your details.","err");return}
+  b.disabled=true;say("Sending…","");
+  fetch("https://business.baigamats.com/api/careers",{method:"POST",body:new FormData(f)})
+    .then(function(r){return r.json().catch(function(){return{ok:false,message:"Something went wrong. Please try again."}})})
+    .then(function(j){
+      if(j.ok){f.reset();say(j.message,"ok");f.scrollIntoView({behavior:"smooth",block:"center"})}
+      else{say(j.message||"Something went wrong. Please try again.","err")}
+    })
+    .catch(function(){say("We could not send your application. Please check your connection and try again.","err")})
+    .then(function(){b.disabled=false});
+});
+})();
+</script>
 <style>.terms h3{margin-top:30px}.terms p{color:var(--muted);margin-top:8px}.terms a{color:var(--brand);text-decoration:underline}</style>
 <footer>
   <div class="wrap">
