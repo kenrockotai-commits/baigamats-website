@@ -163,7 +163,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 <h3>5. Payments and fees</h3>
 <p>A sale is marked as paid only when the payment provider confirms it. Fees that apply to payments made through the platform are shown to you before you use them. Providers can delay, reject or reverse a payment under their own rules, and we cannot guarantee any individual transaction.</p>
 <h3>6. Your data</h3>
-<p>Your business records belong to you. We use them to run the service for you and handle them as described in our <a href="https://business.baigamats.com/privacy">Privacy policy</a>.</p>
+<p>When you visit this website we count the visit (the page, the site you came from, your country and device type) without cookies and without storing your IP address. Your business records belong to you. We use them to run the service for you and handle them as described in our <a href="https://business.baigamats.com/privacy">Privacy policy</a>.</p>
 <h3>7. Availability</h3>
 <p>We work to keep the platform available but do not promise it will be uninterrupted or error-free. We may update, change or pause parts of it, and we will try to give notice of changes that affect you.</p>
 <h3>8. Liability</h3>
@@ -183,5 +183,15 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   </div>
 </footer>
 
+<script>
+/* Privacy-friendly visit counter: sends the page and referrer to Baigamats. No cookies, no IP stored. */
+(function(){try{
+  if(!/(^|\.)baigamats\.com$/.test(location.hostname))return;
+  var d=JSON.stringify({path:location.pathname,ref:document.referrer||""});
+  var u="https://business.baigamats.com/api/track";
+  if(navigator.sendBeacon){navigator.sendBeacon(u,new Blob([d],{type:"text/plain"}));}
+  else{fetch(u,{method:"POST",body:d,keepalive:true,headers:{"Content-Type":"text/plain"}});}
+}catch(e){}})();
+</script>
 </body>
 </html>

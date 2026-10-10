@@ -340,5 +340,15 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   </div>
 </footer>
 
+<script>
+/* Privacy-friendly visit counter: sends the page and referrer to Baigamats. No cookies, no IP stored. */
+(function(){try{
+  if(!/(^|\.)baigamats\.com$/.test(location.hostname))return;
+  var d=JSON.stringify({path:location.pathname,ref:document.referrer||""});
+  var u="https://business.baigamats.com/api/track";
+  if(navigator.sendBeacon){navigator.sendBeacon(u,new Blob([d],{type:"text/plain"}));}
+  else{fetch(u,{method:"POST",body:d,keepalive:true,headers:{"Content-Type":"text/plain"}});}
+}catch(e){}})();
+</script>
 </body>
 </html>
