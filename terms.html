@@ -163,7 +163,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 <h3>5. Payments and fees</h3>
 <p>A sale is marked as paid only when the payment provider confirms it. Fees that apply to payments made through the platform are shown to you before you use them. Providers can delay, reject or reverse a payment under their own rules, and we cannot guarantee any individual transaction.</p>
 <h3>6. Your data</h3>
-<p>When you visit this website we count the visit (the page, the site you came from, your country and device type) without cookies and without storing your IP address. Your business records belong to you. We use them to run the service for you and handle them as described in our <a href="https://business.baigamats.com/privacy">Privacy policy</a>.</p>
+<p>If you accept cookies on this website, we set one first-party cookie holding a random id, and use it to count visits: the page, the site you came from, your country and city, and your device type. We never store your IP address. If you decline, nothing is counted and no cookie is set. You can change your choice any time with "Cookie settings" in the footer. Your business records belong to you. We use them to run the service for you and handle them as described in our <a href="https://business.baigamats.com/privacy">Privacy policy</a>.</p>
 <h3>7. Availability</h3>
 <p>We work to keep the platform available but do not promise it will be uninterrupted or error-free. We may update, change or pause parts of it, and we will try to give notice of changes that affect you.</p>
 <h3>8. Liability</h3>
@@ -184,13 +184,33 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 </footer>
 
 <script>
-/* Privacy-friendly visit counter: sends the page and referrer to Baigamats. No cookies, no IP stored. */
+/* Cookie consent + visit counter. Nothing is tracked unless the visitor presses Accept.
+   Stores a random id in a first-party cookie; no IP address is stored. */
 (function(){try{
   if(!/(^|\.)baigamats\.com$/.test(location.hostname))return;
-  var d=JSON.stringify({path:location.pathname,ref:document.referrer||""});
-  var u="https://business.baigamats.com/api/track";
-  if(navigator.sendBeacon){navigator.sendBeacon(u,new Blob([d],{type:"text/plain"}));}
-  else{fetch(u,{method:"POST",body:d,keepalive:true,headers:{"Content-Type":"text/plain"}});}
+  var KEY="bg_consent",CK="bg_vid",URL="https://business.baigamats.com/api/track";
+  function get(){try{return localStorage.getItem(KEY)}catch(e){return null}}
+  function set(v){try{localStorage.setItem(KEY,v)}catch(e){}}
+  function cookie(n){var m=document.cookie.match(new RegExp("(?:^|; )"+n+"=([^;]*)"));return m?m[1]:null}
+  function vid(){var v=cookie(CK);if(v&&/^[a-f0-9]{16,40}$/.test(v))return v;
+    var a=new Uint8Array(12);crypto.getRandomValues(a);v=Array.prototype.map.call(a,function(x){return("0"+x.toString(16)).slice(-2)}).join("");
+    document.cookie=CK+"="+v+"; max-age=31536000; path=/; SameSite=Lax; Secure";return v}
+  function wipe(){document.cookie=CK+"=; max-age=0; path=/; SameSite=Lax; Secure"}
+  function track(){var d=JSON.stringify({path:location.pathname,ref:document.referrer||"",vid:vid()});
+    if(navigator.sendBeacon){navigator.sendBeacon(URL,new Blob([d],{type:"text/plain"}))}
+    else{fetch(URL,{method:"POST",body:d,keepalive:true,headers:{"Content-Type":"text/plain"}})}}
+  var st=document.createElement("style");
+  st.textContent=".cc{position:fixed;left:16px;right:16px;bottom:16px;z-index:50;max-width:560px;margin-inline:auto;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 24px 60px -20px rgba(0,0,0,.45);font-size:.92rem}.cc p{margin:0;color:var(--muted)}.cc b{color:var(--ink)}.cc .r{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.cc button{font:600 .92rem var(--body);padding:10px 18px;border-radius:10px;cursor:pointer;border:1.5px solid var(--ink);background:transparent;color:var(--ink)}.cc button.y{background:var(--accent);border-color:var(--accent);color:#13213C}.cc a{color:var(--brand)}";
+  document.head.appendChild(st);
+  function close(){var e=document.getElementById("cc");if(e)e.remove()}
+  function ask(){close();var e=document.createElement("div");e.id="cc";e.className="cc";e.setAttribute("role","dialog");e.setAttribute("aria-label","Cookies");
+    e.innerHTML="<p><b>Can we count your visit?</b> If you accept, we use one cookie with a random id to count visits and see which pages help. We never store your IP address. <a href=\"/terms.html\">Read more</a>.</p><div class=\"r\"><button class=\"y\" id=\"ccy\">Accept</button><button id=\"ccn\">Decline</button></div>";
+    document.body.appendChild(e);
+    document.getElementById("ccy").onclick=function(){set("yes");close();track()};
+    document.getElementById("ccn").onclick=function(){set("no");wipe();close()}}
+  var f=document.querySelector("footer .wrap");
+  if(f){var a=document.createElement("a");a.href="#";a.textContent="Cookie settings";a.style.marginLeft="12px";a.onclick=function(ev){ev.preventDefault();ask()};f.appendChild(a)}
+  var c=get();if(c==="yes")track();else if(c!=="no")ask();
 }catch(e){}})();
 </script>
 </body>
