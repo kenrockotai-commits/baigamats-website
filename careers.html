@@ -155,7 +155,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 <main><section class="pg"><div class="wrap" style="max-width:780px">
 <span class="eyebrow">Careers</span>
 <h1 style="font-size:clamp(2rem,5vw,3rem);margin-top:14px">Work with Baigamats</h1>
-<p class="sub">We are a small team in Uganda building business software for every kind of business. There are no open roles at the moment, but we are always glad to hear from people who care about making everyday business simpler. Tell us about yourself and we will keep your application for future openings.</p>
+<p class="sub">We are a small team in Uganda building business software for every kind of business. Open roles are listed below. If none fits, send a general application and we will keep it for future openings.</p>
+<div id="jobs" style="display:grid;gap:14px;margin:26px 0"></div>
 
 <form id="apply" class="post form" novalidate>
   <h3>Apply</h3>
@@ -165,12 +166,17 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   </div>
   <div class="row">
     <label>Phone or WhatsApp<input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
-    <label>Position or area you are interested in *<input id="role_interest" name="role_interest" type="text" maxlength="160" required></label>
+    <label>Role you are applying for *<select id="job_id" name="job_id"><option value="">General application</option></select></label>
   </div>
   <div class="row">
-    <label>Country you live in *<input id="country_of_residence" name="country_of_residence" type="text" autocomplete="country-name" maxlength="80" required></label>
-    <label>Nationality *<input id="nationality" name="nationality" type="text" maxlength="80" required></label>
+    <label>Country you live in *<span class="cb" data-cb><input id="country_of_residence" name="country_of_residence" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" placeholder="Click to choose or type to search" autocomplete="off" maxlength="80" required><button type="button" class="cbx" tabindex="-1" aria-label="Show list">&#9662;</button><ul class="cbl" role="listbox" hidden></ul></span></label>
+    <label>Nationality (country of citizenship) *<span class="cb" data-cb><input id="nationality" name="nationality" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" placeholder="Click to choose or type to search" autocomplete="off" maxlength="80" required><button type="button" class="cbx" tabindex="-1" aria-label="Show list">&#9662;</button><ul class="cbl" role="listbox" hidden></ul></span></label>
   </div>
+  <label>Years of work experience *
+    <select id="experience_years" name="experience_years" required>
+      <option value="">Choose one</option><option value="0">Less than 1 year</option><option value="1">1 year</option><option value="2">2 years</option><option value="3">3 years</option><option value="4">4 years</option><option value="5">5 years</option><option value="7">6 to 8 years</option><option value="10">9 to 12 years</option><option value="15">More than 12 years</option>
+    </select>
+  </label>
   <label>Do you have the right to work in Uganda? *
     <select id="work_authorisation" name="work_authorisation" required>
       <option value="">Choose one</option>
@@ -198,17 +204,80 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .form input:focus-visible,.form select:focus-visible,.form textarea:focus-visible{outline:3px solid var(--brand);outline-offset:1px}
 .form .check{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:.9rem;color:var(--muted)}.form .check input{margin-top:4px;flex:none}
 .form .hp{position:absolute;left:-9999px;height:0;overflow:hidden}
+.cb{position:relative;display:block}.cb input{padding-right:38px!important}
+.cbx{position:absolute;right:1px;top:1px;bottom:1px;width:38px;border:0;background:transparent;color:var(--muted);font-size:1rem;cursor:pointer;border-radius:0 10px 10px 0}
+.cbl{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 4px);max-height:240px;overflow:auto;margin:0;padding:6px;list-style:none;background:#fff;border:1.5px solid var(--line);border-radius:12px;box-shadow:0 14px 30px rgba(19,33,60,.16)}
+.cbl[hidden]{display:none}
+.cbl li{padding:9px 10px;border-radius:8px;font-weight:400;cursor:pointer}
+.cbl li.on,.cbl li:hover{background:var(--paper);color:var(--ink)}
+.cbl li.none{color:var(--muted);cursor:default}
 #msg{font-size:.95rem}#msg.ok{color:var(--good)}#msg.err{color:#C75B3F}
 @media(max-width:620px){.form .row{grid-template-columns:1fr}}
 </style>
+<script>
+(function(){
+var C=["Afghanistan", "Albania", "Algeria", "Angola", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahrain", "Bangladesh", "Belarus", "Belgium", "Benin", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo (Brazzaville)", "Congo (DR)", "Costa Rica", "Côte d'Ivoire", "Croatia", "Cuba", "Cyprus", "Czechia", "Denmark", "Djibouti", "Ecuador", "Egypt", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Guinea", "Hungary", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kuwait", "Lebanon", "Lesotho", "Liberia", "Libya", "Lithuania", "Madagascar", "Malawi", "Malaysia", "Mali", "Mauritania", "Mauritius", "Mexico", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nepal", "Netherlands", "New Zealand", "Niger", "Nigeria", "Norway", "Oman", "Pakistan", "Palestine", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saudi Arabia", "Senegal", "Serbia", "Sierra Leone", "Singapore", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Sweden", "Switzerland", "Syria", "Tanzania", "Thailand", "Togo", "Tunisia", "Turkey", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"];
+window.__countries=C;
+Array.prototype.forEach.call(document.querySelectorAll("[data-cb]"),function(w){
+  var inp=w.querySelector("input"),ul=w.querySelector("ul"),btn=w.querySelector("button"),idx=-1,shown=[];
+  function render(all){
+    var q=all?"":inp.value.trim().toLowerCase();
+    shown=C.filter(function(c){return !q||c.toLowerCase().indexOf(q)>-1});
+    if(q)shown.sort(function(a,b){return (b.toLowerCase().indexOf(q)===0)-(a.toLowerCase().indexOf(q)===0)});
+    ul.innerHTML="";
+    if(!shown.length){var n=document.createElement("li");n.className="none";n.textContent="No match. Try another spelling.";ul.appendChild(n)}
+    shown.forEach(function(c,i){var li=document.createElement("li");li.setAttribute("role","option");li.textContent=c;
+      li.addEventListener("mousedown",function(e){e.preventDefault();pick(c)});ul.appendChild(li)});
+    idx=-1;open(true)}
+  function open(v){ul.hidden=!v;inp.setAttribute("aria-expanded",v?"true":"false")}
+  function pick(c){inp.value=c;open(false)}
+  function mark(){var it=ul.querySelectorAll("li:not(.none)");Array.prototype.forEach.call(it,function(x,i){x.className=i===idx?"on":""});if(it[idx])it[idx].scrollIntoView({block:"nearest"})}
+  inp.addEventListener("focus",function(){render(true)});
+  inp.addEventListener("input",function(){render(false)});
+  inp.addEventListener("keydown",function(e){
+    if(e.key==="ArrowDown"){e.preventDefault();if(ul.hidden)render(false);idx=Math.min(idx+1,shown.length-1);mark()}
+    else if(e.key==="ArrowUp"){e.preventDefault();idx=Math.max(idx-1,0);mark()}
+    else if(e.key==="Enter"&&!ul.hidden){e.preventDefault();if(idx>-1)pick(shown[idx]);else if(shown.length===1)pick(shown[0])}
+    else if(e.key==="Escape"||e.key==="Tab"){open(false)}});
+  inp.addEventListener("blur",function(){setTimeout(function(){open(false)},120)});
+  btn.addEventListener("mousedown",function(e){e.preventDefault();if(ul.hidden){inp.focus();render(true)}else open(false)});
+});
+})();
+</script>
+<script>
+(function(){
+var box=document.getElementById("jobs"),sel=document.getElementById("job_id");
+var T={full_time:"Full time",part_time:"Part time",contract:"Contract",internship:"Internship"};
+function esc(t){var d=document.createElement("div");d.textContent=t==null?"":String(t);return d.innerHTML}
+fetch("https://business.baigamats.com/api/jobs").then(function(r){return r.json()}).then(function(j){
+  var list=(j&&j.jobs)||[];
+  if(!list.length){box.innerHTML='<p class="sub" style="margin:0">There are no open roles right now.</p>';return}
+  box.innerHTML=list.map(function(x){
+    var meta=[x.department,x.location,T[x.employment_type],x.closes_on?"Apply by "+x.closes_on:""].filter(Boolean).map(esc).join(" · ");
+    return '<article class="post"><h3>'+esc(x.title)+'</h3><p style="color:var(--muted);font-size:.9rem;margin-top:4px">'+meta+'</p>'+
+      '<p style="white-space:pre-line;margin-top:10px">'+esc(x.description)+'</p>'+
+      (x.requirements?'<p style="margin-top:10px;font-weight:600">Requirements</p><p style="white-space:pre-line">'+esc(x.requirements)+'</p>':'')+
+      '<p style="margin-top:12px"><a class="btn primary sm" style="color:#13213C" href="#apply" data-job="'+esc(x.id)+'">Apply for this role</a></p></article>';
+  }).join("");
+  list.forEach(function(x){var o=document.createElement("option");o.value=x.id;o.textContent=x.title;sel.appendChild(o)});
+  box.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("[data-job]");if(a){sel.value=a.getAttribute("data-job")}});
+}).catch(function(){box.innerHTML=""});
+})();
+</script>
 <script>
 (function(){
 var f=document.getElementById("apply"),m=document.getElementById("msg"),b=document.getElementById("send");
 function say(t,c){m.textContent=t;m.className=c||""}
 f.addEventListener("submit",function(e){e.preventDefault();
   var cv=document.getElementById("cv").files[0];
-  var need=["full_name","email","role_interest","country_of_residence","nationality","work_authorisation"];
+  var need=["full_name","email","experience_years","country_of_residence","nationality","work_authorisation"];
   for(var i=0;i<need.length;i++){if(!f.elements[need[i]].value.trim()){say("Please fill in all fields marked with *.","err");f.elements[need[i]].focus();return}}
+  var C=window.__countries||[];
+  var fx=["country_of_residence","nationality"];
+  for(var k=0;k<fx.length;k++){var el=f.elements[fx[k]],v=el.value.trim().toLowerCase(),hit=null;
+    for(var n=0;n<C.length;n++){if(C[n].toLowerCase()===v){hit=C[n];break}}
+    if(!hit){say("Please choose "+(k?"your nationality":"your country")+" from the list.","err");el.focus();return}
+    el.value=hit}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.elements.email.value.trim())){say("Please enter a valid email address.","err");return}
   if(!cv){say("Please attach your CV.","err");return}
   if(cv.size>4*1024*1024){say("Your CV is larger than 4 MB. Please attach a smaller file.","err");return}
